@@ -1,9 +1,14 @@
 import { PostCoverImage } from "../PostCoverImage";
-import { PostHeading } from "../PostHeading";
 
-export function PostFeatured() {
+import { PostSummary } from "../PostSummary";
+import { findAllPublicPosts } from "@/lib/post/queries";
+
+export async function PostFeatured() {
   const slug = "qualquer";
   const postLink = `/post/${slug}`;
+
+  const posts = await findAllPublicPosts();
+  const post = posts[0];
 
   return (
     <>
@@ -13,25 +18,20 @@ export function PostFeatured() {
           imageProps={{
             width: 1200,
             height: 720,
-            src: "/images/bryen_9.png",
-            alt: "Alt da Imagem",
+            src: post.coverImageUrl,
+            alt: post.title,
             priority: true,
           }}
         />
 
-        <div className="flex flex-col gap-4 sm:justify-center">
-          <time
-            className="text-slate-600 block text-sm/tight"
-            dateTime={"12/12/2022"}
-          >
-            12/12/2022
-          </time>
-
-          <PostHeading url={postLink} as="h1">
-            Opa asidjioasd
-          </PostHeading>
-          <p>asdj ljalskdj asiodujaiosujd zm,xcn iqajsd</p>
-        </div>
+        <PostSummary
+          excerpt={post.excerpt}
+          createdAt={post.createdAt}
+          relativeDate={post.createdAt}
+          title={post.title}
+          postLink={postLink}
+          postHeading="h1"
+        />
       </section>
     </>
   );
