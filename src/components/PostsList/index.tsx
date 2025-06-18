@@ -1,5 +1,5 @@
 import { PostCoverImage } from "../PostCoverImage";
-import { formatDateTime, formatRelativeDate } from "@/utils/format-datetime";
+
 import { PostSummary } from "../PostSummary";
 import { findAllPublicPostsCached } from "@/lib/post/queries";
 
@@ -9,8 +9,6 @@ export async function PostsList() {
     <div className="grid grid-cols-1 mb-16 gap-8 sm:grid-cols-2 lg:grid-cols-3">
       {posts.slice(1).map((post) => {
         const postLink = `/post/${post.slug}`;
-        const createdAt = formatDateTime(post.createdAt);
-        const relativeDate = formatRelativeDate(post.createdAt);
         return (
           <div className="flex flex-col gap-4 group " key={post.id}>
             <PostCoverImage
@@ -25,8 +23,7 @@ export async function PostsList() {
 
             <PostSummary
               excerpt={post.excerpt}
-              createdAt={createdAt}
-              relativeDate={relativeDate}
+              createdAt={post.createdAt}
               title={post.title}
               postLink={postLink}
               postHeading="h1"
