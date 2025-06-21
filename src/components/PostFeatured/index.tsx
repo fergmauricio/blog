@@ -27,7 +27,6 @@ export async function PostFeatured() {
         <PostSummary
           excerpt={post.excerpt}
           createdAt={post.createdAt}
-          relativeDate={post.createdAt}
           title={post.title}
           postLink={postLink}
           postHeading="h1"

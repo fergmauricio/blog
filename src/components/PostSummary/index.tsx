@@ -5,7 +5,6 @@ type PostSummaryProps = {
   postHeading: "h1" | "h2";
   postLink: string;
   createdAt: string;
-  relativeDate: string;
   title: string;
   excerpt: string;
 };
