@@ -8,7 +8,7 @@ CREATE TABLE `posts` (
 	`cover_image_url` text NOT NULL,
 	`published` integer NOT NULL,
 	`created_at` text NOT NULL,
-	`updated_at` text NOT NULL
+	`updated_at` text
 );
 --> statement-breakpoint
 CREATE UNIQUE INDEX `posts_slug_unique` ON `posts` (`slug`);
