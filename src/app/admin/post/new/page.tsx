@@ -1,4 +1,5 @@
 import { Button } from "@/components/Button";
+import { InputText } from "@/components/InputText";
 import { BugIcon, CheckIcon } from "lucide-react";
 
 export const dynamic = "force-dynamic";
@@ -29,6 +30,19 @@ export default async function adminNewPostPage() {
           <CheckIcon />
           OK
         </Button>
+      </div>
+      <div className="flex flex-col gap-6">
+        <InputText
+          disabled
+          placeholder="Digite seu nome"
+          labelText="Nome"
+          defaultValue="Olá mundo"
+        />
+        <InputText
+          placeholder="Digite seu sobrenome"
+          labelText="Sobrenome"
+          readOnly
+        />{" "}
       </div>
     </>
   );
