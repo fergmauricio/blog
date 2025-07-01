@@ -4,12 +4,13 @@ import { uploadImageAction } from "@/actions/upload/upload-image-action";
 import { Button } from "@/components/Button";
 import { IMAGE_UPLOAD_MAX_SIZE } from "@/lib/post/constants";
 import { ImageUpIcon } from "lucide-react";
-import { useRef, useTransition } from "react";
+import { useRef, useState, useTransition } from "react";
 import { toast } from "react-toastify";
 
 export function ImageUploader() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isUploading, startTransition] = useTransition();
+  const [imgUrl, setImgUrl] = useState();
 
   function handleChooseFile() {
     if (!fileInputRef.current) return;
@@ -20,12 +21,18 @@ export function ImageUploader() {
   function handleChange() {
     toast.dismiss();
 
-    if (!fileInputRef.current) return;
+    if (!fileInputRef.current) {
+      setImgUrl("");
+      return;
+    }
 
     const fileInput = fileInputRef.current;
     const file = fileInput?.files?.[0];
 
-    if (!file) return;
+    if (!file) {
+      setImgUrl("");
+      return;
+    }
 
     if (file.size > IMAGE_UPLOAD_MAX_SIZE) {
       toast.error(
@@ -47,21 +54,39 @@ export function ImageUploader() {
       if (result.error) {
         toast.error(result.error);
         fileInput.value = "";
+        setImgUrl("");
         return;
       }
 
+      setImgUrl(result.url);
       toast.success(result.url);
     });
-
-    //console.log(formData);
   }
 
   return (
     <div className="flex flex-col  gap-2 py-4">
-      <Button type="button" className="self-center" onClick={handleChooseFile}>
+      <Button
+        type="button"
+        className="w-[200px]"
+        onClick={handleChooseFile}
+        disabled={isUploading}
+      >
         <ImageUpIcon />
         Enviar Imagem
       </Button>
+
+      {!!imgUrl && (
+        <div className="flex flex-col gap-4">
+          <p>
+            <b>URL:</b>
+            {imgUrl}
+          </p>
+
+          {/* eslint-disable-next-line */}
+          <img className="rounded-lg" src={imgUrl} />
+        </div>
+      )}
+
       <input
         ref={fileInputRef}
         className="hidden"

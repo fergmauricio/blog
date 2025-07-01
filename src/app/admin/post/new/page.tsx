@@ -1,18 +1,19 @@
 "use client";
 
 import { ManagePostForm } from "@/components/Admin/ManagePostForm";
-import { Button } from "@/components/Button";
-import { InputCheckbox } from "@/components/InputCheckbox";
-import { InputText } from "@/components/InputText";
-import { BugIcon, CheckIcon } from "lucide-react";
+import { Metadata } from "next";
 
 export const dynamic = "force-dynamic";
 
+export const metadata: Metadata = {
+  title: "criar post",
+};
+
 export default function adminNewPostPage() {
   return (
-    <>
-      <h1>Criar post</h1>
+    <div className="flex flex-col gap-6">
+      <h1 className="text-xl font-extrabold">Criar post</h1>
       <ManagePostForm />
-    </>
+    </div>
   );
 }
