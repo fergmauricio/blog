@@ -1,5 +1,3 @@
-"use client";
-
 import { ManagePostForm } from "@/components/Admin/ManagePostForm";
 import { Metadata } from "next";
 
@@ -13,7 +11,7 @@ export default function adminNewPostPage() {
   return (
     <div className="flex flex-col gap-6">
       <h1 className="text-xl font-extrabold">Criar post</h1>
-      <ManagePostForm />
+      <ManagePostForm mode="create" />
     </div>
   );
 }

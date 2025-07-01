@@ -2,16 +2,16 @@
 
 import { drizzleDb } from "@/db/drizzle";
 import { postsTable } from "@/db/drizzle/schemas";
-import { SIMULATE_WAIT_IN_MS } from "@/lib/post/constants";
 import { postRepository } from "@/repositories/post";
-import { asyncDelay } from "@/utils/async-delay";
 import { logColor } from "@/utils/log-color";
 import { eq } from "drizzle-orm";
 import { revalidateTag } from "next/cache";
 
 export async function deletePostAction(id: string) {
-  await asyncDelay(SIMULATE_WAIT_IN_MS);
-  logColor(" " + id);
+  // TODO: checar login do usuário
+
+  // TODO: remover linhas abaixo
+  logColor("" + id);
 
   if (!id || typeof id !== "string") {
     return {
@@ -23,12 +23,14 @@ export async function deletePostAction(id: string) {
 
   if (!post) {
     return {
-      error: "Post não existente",
+      error: "Post não existe",
     };
   }
 
+  // TODO: mover este método para o repositório
   await drizzleDb.delete(postsTable).where(eq(postsTable.id, id));
 
+  // TODO: revalidateTag ou revalidatePath
   revalidateTag("posts");
   revalidateTag(`post-${post.slug}`);
 

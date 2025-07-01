@@ -1,3 +1,4 @@
+import { drizzleDb } from "@/db/drizzle";
 import { PostModel } from "@/models/post/post-model";
 
 export interface PostRepository {
