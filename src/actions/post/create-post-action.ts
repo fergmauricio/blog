@@ -1,7 +1,5 @@
 "use server";
 
-import { drizzleDb } from "@/db/drizzle";
-import { postsTable } from "@/db/drizzle/schemas";
 import { makePartialPublicPost, PublicPost } from "@/dto/post/dto";
 import { PostCreateSchema } from "@/lib/post/validations";
 import { PostModel } from "@/models/post/post-model";
@@ -12,22 +10,22 @@ import { revalidateTag } from "next/cache";
 import { redirect } from "next/navigation";
 import { v4 as uuidV4 } from "uuid";
 
-type createPostActionState = {
+type CreatePostActionState = {
   formState: PublicPost;
   errors: string[];
-  success?: true;
+  success?: string;
 };
 
 export async function createPostAction(
-  prevState: createPostActionState,
+  prevState: CreatePostActionState,
   formData: FormData
-): Promise<createPostActionState> {
-  //const title = formData.get("title")?.toString() || "";
+): Promise<CreatePostActionState> {
+  // TODO: verificar se o usuário tá logado
 
   if (!(formData instanceof FormData)) {
     return {
       formState: prevState.formState,
-      errors: [],
+      errors: ["Dados inválidos"],
     };
   }
 
@@ -57,11 +55,16 @@ export async function createPostAction(
     if (e instanceof Error) {
       return {
         formState: newPost,
-        errors: ["Erro desconhecido"],
+        errors: [e.message],
       };
     }
+
+    return {
+      formState: newPost,
+      errors: ["Erro desconhecido"],
+    };
   }
 
   revalidateTag("posts");
-  redirect(`/admin/post/${newPost.id}`);
+  redirect(`/admin/post/${newPost.id}?created=1`);
 }

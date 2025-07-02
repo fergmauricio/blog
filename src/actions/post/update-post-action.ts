@@ -1,26 +1,27 @@
 "use server";
 
-import { makePartialPublicPost, PublicPost } from "@/dto/post/dto";
+import {
+  makePartialPublicPost,
+  makePublicPostFromDb,
+  PublicPost,
+} from "@/dto/post/dto";
 import { PostUpdateSchema } from "@/lib/post/validations";
-import { PostModel } from "@/models/post/post-model";
 import { postRepository } from "@/repositories/post";
 import { getZodErrorMessages } from "@/utils/get-zod-error-messages";
-import { makeSlugFromText } from "@/utils/make-slug-from-text";
+import { makeRandomString } from "@/utils/make-random-strings";
 import { revalidateTag } from "next/cache";
-import { redirect } from "next/navigation";
-import { v4 as uuidV4 } from "uuid";
 
-type updatePostActionState = {
+type UpdatePostActionState = {
   formState: PublicPost;
   errors: string[];
-  success?: true;
+  success?: string;
 };
 
 export async function updatePostAction(
-  prevState: updatePostActionState,
+  prevState: UpdatePostActionState,
   formData: FormData
-): Promise<updatePostActionState> {
-  //const title = formData.get("title")?.toString() || "";
+): Promise<UpdatePostActionState> {
+  // TODO: verificar se o usuário tá logado
 
   if (!(formData instanceof FormData)) {
     return {
@@ -29,9 +30,9 @@ export async function updatePostAction(
     };
   }
 
-  const id = formData.get("id")?.slice.toString() || "";
+  const id = formData.get("id")?.toString() || "";
 
-  if (!id || id !== "string") {
+  if (!id || typeof id !== "string") {
     return {
       formState: prevState.formState,
       errors: ["ID inválido"],
@@ -50,21 +51,33 @@ export async function updatePostAction(
   }
 
   const validPostData = zodParsedObj.data;
-  const newPost: PostModel = {
+  const newPost = {
     ...validPostData,
   };
 
+  let post;
   try {
-    await postRepository.update(newPost);
+    post = await postRepository.update(id, newPost);
   } catch (e: unknown) {
     if (e instanceof Error) {
       return {
-        formState: newPost,
-        errors: ["Erro desconhecido"],
+        formState: makePartialPublicPost(formDataToObj),
+        errors: [e.message],
       };
     }
+
+    return {
+      formState: makePartialPublicPost(formDataToObj),
+      errors: ["Erro desconhecido"],
+    };
   }
 
   revalidateTag("posts");
-  redirect(`/admin/post/${newPost.id}`);
+  revalidateTag(`post-${post.slug}`);
+
+  return {
+    formState: makePublicPostFromDb(post),
+    errors: [],
+    success: makeRandomString(),
+  };
 }
